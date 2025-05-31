@@ -34,7 +34,6 @@ def readable_description(desc):
     return extract_text(desc.get("content", []))
 
 def fetch_all_tickets():
-    # Load variables and validate
     JIRA_EMAIL = os.getenv("JIRA_EMAIL")
     JIRA_API_TOKEN = os.getenv("JIRA_API_TOKEN")
     JIRA_DOMAIN = os.getenv("JIRA_DOMAIN")
@@ -105,6 +104,21 @@ def choose_ticket(tickets):
         print("⚠️ Invalid input. Please enter a number.")
         return None
 
+def save_ticket_to_file(ticket):
+    filename = f"{ticket['key']}.txt"
+    content = f"""
+🆔 Ticket: {ticket['key']}
+📝 Summary: {ticket['summary']}
+📄 Description:
+
+{ticket['description']}
+    """.strip()
+
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write(content)
+
+    print(f"\n💾 Ticket details saved to {filename}")
+
 # Entry point
 if __name__ == "__main__":
     print("🚀 Starting ticket fetch process...")
@@ -113,6 +127,7 @@ if __name__ == "__main__":
         chosen = choose_ticket(all_tickets)
         if chosen:
             print(f"\n✅ You selected:\n🆔 Ticket: {chosen['key']}\n📝 Summary: {chosen['summary']}\n📄 Description:\n{chosen['description']}")
+            save_ticket_to_file(chosen)
         else:
             print("❌ No ticket selected.")
     else:
